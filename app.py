@@ -50,13 +50,33 @@ current_world_price = global_data[-1]["World_Price"]
 
 countries_data = sheet_countries.get_all_records()
 
-# --- BULLETPROOF DATA CLEANER ---
-# This forces any text with commas or dollar signs back into pure math numbers
+# --- INDESTRUCTIBLE DATA CLEANER ---
+valid_countries = []
 for row in countries_data:
+    # 1. Skip the row entirely if the Country name is blank
+    if not row.get("Country") or str(row.get("Country")).strip() == "":
+        continue
+        
+    # 2. Force all economy data into clean numbers
     for key in ["gdp", "pop", "treasury", "env", "base_supply", "base_demand"]:
-        # We turn it into a string, strip out bad characters, and force it to be a float
-        row[key] = float(str(row[key]).replace(',', '').replace('$', ''))
+        raw_value = row.get(key, 0)
+        try:
+            # Strip out commas, dollar signs, and accidental spaces
+            clean_value = str(raw_value).replace(',', '').replace('$', '').strip()
+            
+            # If the cell was empty, default to 0
+            if clean_value == "":
+                clean_value = "0"
+                
+            row[key] = float(clean_value)
+        except ValueError:
+            # If someone typed a word like "apples" instead of a number, default to 0
+            row[key] = 0.0
+            
+    valid_countries.append(row)
 
+# Overwrite the raw data with our scrubbed data
+countries_data = valid_countries
 country_names = [c["Country"] for c in countries_data]
 
 submissions_data = sheet_submissions.get_all_records()
