@@ -98,11 +98,15 @@ elif role == "Student (Country View)":
     st.title("🏛️ National Government Dashboard")
     country_choice = st.selectbox("Select your assigned country:", country_names)
     
-    # Locate the active country's row in the database
+# Locate the active country's row in the database
     c_data = next((item for item in countries_data if item["Country"] == country_choice), None)
     
+    # SAFETY CHECK: If no country is found, stop and show a warning
+    if c_data is None:
+        st.warning("⚠️ No country data found! Teacher: Please check the 'Countries' tab in your Google Sheet.")
+    
     # Check if they have already played this round
-    if country_choice in current_submissions:
+    elif country_choice in current_submissions:
         st.success(f"✅ Policies for {country_choice} have been locked in for Year {current_year}. Please wait for the Teacher to resolve the global market.")
     else:
         st.markdown(f"### Current Status: Year {current_year}")
