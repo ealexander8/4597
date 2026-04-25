@@ -49,6 +49,14 @@ current_year = global_data[-1]["Year"]
 current_world_price = global_data[-1]["World_Price"]
 
 countries_data = sheet_countries.get_all_records()
+
+# --- BULLETPROOF DATA CLEANER ---
+# This forces any text with commas or dollar signs back into pure math numbers
+for row in countries_data:
+    for key in ["gdp", "pop", "treasury", "env", "base_supply", "base_demand"]:
+        # We turn it into a string, strip out bad characters, and force it to be a float
+        row[key] = float(str(row[key]).replace(',', '').replace('$', ''))
+
 country_names = [c["Country"] for c in countries_data]
 
 submissions_data = sheet_submissions.get_all_records()
