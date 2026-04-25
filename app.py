@@ -114,13 +114,18 @@ elif role == "Student (Country View)":
         # Calculate the current elasticity based on the country's GDP
         current_elasticity = max(0.1, 0.85 - (0.00003 * c_data['gdp']))
         
-        # We upgraded this from 4 columns to 5
-        m1, m2, m3, m4, m5 = st.columns(5)
+        # Calculate Total Fertility Rate (TFR) based on GDP
+        # TFR drops as GDP rises, but will never drop below 1.2
+        current_tfr = max(1.2, 6.5 - (0.0001 * c_data['gdp']))
+        
+        # We upgraded this from 5 columns to 6
+        m1, m2, m3, m4, m5, m6 = st.columns(6)
         m1.metric("Treasury", f"${c_data['treasury']:,.0f}M")
         m2.metric("GDP per Capita", f"${c_data['gdp']:,.0f}")
         m3.metric("Population", f"{c_data['pop']:,.0f}M")
         m4.metric("Environment", f"{c_data['env']}/100")
         m5.metric("IEoFD", f"{current_elasticity:.2f}")
+        m6.metric("TFR", f"{current_tfr:.2f}")
         
         st.info(f"🌐 **Current World Food Price:** ${current_world_price:,.2f} per unit")
         
