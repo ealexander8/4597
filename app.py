@@ -110,11 +110,17 @@ elif role == "Student (Country View)":
         st.success(f"✅ Policies for {country_choice} have been locked in for Year {current_year}. Please wait for the Teacher to resolve the global market.")
     else:
         st.markdown(f"### Current Status: Year {current_year}")
-        m1, m2, m3, m4 = st.columns(4)
+        
+        # Calculate the current elasticity based on the country's GDP
+        current_elasticity = max(0.1, 0.85 - (0.00003 * c_data['gdp']))
+        
+        # We upgraded this from 4 columns to 5
+        m1, m2, m3, m4, m5 = st.columns(5)
         m1.metric("Treasury", f"${c_data['treasury']:,.0f}M")
         m2.metric("GDP per Capita", f"${c_data['gdp']:,.0f}")
         m3.metric("Population", f"{c_data['pop']:,.0f}M")
         m4.metric("Environment", f"{c_data['env']}/100")
+        m5.metric("IEoFD", f"{current_elasticity:.2f}")
         
         st.info(f"🌐 **Current World Food Price:** ${current_world_price:,.2f} per unit")
         
